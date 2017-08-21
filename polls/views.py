@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from .models import Questions, Choice
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
 from django.template import loader
 
 
@@ -28,8 +30,16 @@ def detail(request, question):
     :param question: question id
     :return: string with a little info
     """
-    response = "You are looking at the question {}".format(question)
-    return HttpResponse(response)
+    # try:
+    #     q = Questions.objects.get(pk=question)
+    #     response = "You are looking at the question {}".format(q.question_text)
+    # except Questions.DoesNotExist:
+    #     raise Http404("question does not exist")
+    # return HttpResponse(response)
+    q = get_object_or_404(Questions, pk=question)
+    # There's also a get_list_or_404() function, which works just as get_object_or_404() - except using filter()
+    #  instead of get(). It raises Http404 if the list is empty.
+    return HttpResponse(render(request, 'polls/details.html', {'q':q}))
 
 
 def results(request, question):
@@ -50,11 +60,12 @@ def last_viewed(request):
     :return: string of last 5 questions, sorted in pub order
     """
     last_viewed_questions = Questions.objects.order_by('-pub_date')[:5]
-    template = loader.get_template("last_viewed.html")
     context = {
         'latest_question_list': last_viewed_questions
     }
-    return HttpResponse(template.render(context, request))
+    # template = loader.get_template("last_viewed.html")
+    # return HttpResponse(template.render(context, request))
+    return render(request, 'polls/last_viewed.html', context)
 
 
 def vote(request, question):
