@@ -44,17 +44,6 @@ def detail(request, question):
     return HttpResponse(render(request, 'polls/details.html', {'question': q}))
 
 
-# def results(request, question):
-#     """
-#     for /poll/<question_id>/results
-#     :param request: HttpRequest object
-#     :param question: question id
-#     :return: string with a little info
-#     """
-#     response = "You are looking at results of the question, {}".format(question)
-#     return HttpResponse(response)
-
-
 def last_viewed(request):
     """
     for /poll/lastViewed
