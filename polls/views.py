@@ -1,6 +1,8 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from .models import Questions, Choice
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+
 from django.http import Http404
 from django.template import loader
 
@@ -39,18 +41,18 @@ def detail(request, question):
     q = get_object_or_404(Questions, pk=question)
     # There's also a get_list_or_404() function, which works just as get_object_or_404() - except using filter()
     #  instead of get(). It raises Http404 if the list is empty.
-    return HttpResponse(render(request, 'polls/details.html', {'q':q}))
+    return HttpResponse(render(request, 'polls/details.html', {'question': q}))
 
 
-def results(request, question):
-    """
-    for /poll/<question_id>/results
-    :param request: HttpRequest object
-    :param question: question id
-    :return: string with a little info
-    """
-    response = "You are looking at results of the question, {}".format(question)
-    return HttpResponse(response)
+# def results(request, question):
+#     """
+#     for /poll/<question_id>/results
+#     :param request: HttpRequest object
+#     :param question: question id
+#     :return: string with a little info
+#     """
+#     response = "You are looking at results of the question, {}".format(question)
+#     return HttpResponse(response)
 
 
 def last_viewed(request):
@@ -75,5 +77,23 @@ def vote(request, question):
     :param question: question id
     :return: string with a little info
     """
-    return HttpResponse("You are voting for question {}".format(question))
+    question = get_object_or_404(Questions, pk=question)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        context = {
+            'question': question,
+            'error_message': "You didn't select a choice",
+        }
+        return render(request, 'polls/details.html', context)
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        # Return a HttpResponseRedirect after succesfully dealing with POST Data. This prevents data from being posted
+        # twice if a user hits the back button
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
+
+def results(request, question):
+    q = get_object_or_404(Questions, pk=question)
+    return render(request, 'polls/results.html', {'question': q})
