@@ -26,8 +26,8 @@ class Questions(models.Model):
 
 class Choice(models.Model):
     """
-    Class to represent choice table. Has three fields, question, choice_text, and votes
-    question acts as foreign key pointing to Questions table
+    Class to represent choice table. Has three fields, question, choice_text,
+    and votes question acts as foreign key pointing to Questions table
     """
     question = models.ForeignKey(Questions, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)

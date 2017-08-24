@@ -5,7 +5,8 @@
     <title>Details of a question</title>
 </head>
 <body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+</script>
 <script>
     $(document).ready(function () {
         if($("input[type=radio]:checked").length === 0){
@@ -25,8 +26,10 @@
 <form action="{% url 'polls:vote' question.id %}" method="post" id="form">
     {% csrf_token %}
     {% for choice in question.choice_set.all %}
-        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>
-        <label for = "choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}"
+               value="{{ choice.id }}"/>
+        <label for = "choice{{ forloop.counter }}">{{ choice.choice_text }}
+        </label><br>
     {% endfor %}
     <input type="submit" value="vote" name="voteButton" id='voteButton'/>
 </form>
