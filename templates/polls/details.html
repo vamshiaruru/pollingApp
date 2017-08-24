@@ -12,7 +12,6 @@
             $('#voteButton').prop('disabled', true);
         }
         $('form :input').change(function () {
-            alert("changed");
             if($("input[type=radio]:checked").length === 0){
                 $('#voteButton').prop('disabled', true);
             }else{
